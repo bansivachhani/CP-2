@@ -1,0 +1,136 @@
+/* General Styling */
+body {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Times New Roman', Times, serif;
+    background-color: #f0f4f7;
+}
+
+/* Sidebar Styling */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 300px; /* Thicker Sidebar */
+    background-color: #3b4cb8;
+    color: white;
+    padding-top: 20px;
+    transition: width 0.3s;
+    overflow-y: auto; /* Enable scrolling if content is too long */
+}
+
+.sidebar h2 {
+    text-align: center;
+    padding-bottom: 20px;
+    font-size: 2rem;
+}
+
+/* Sidebar Links Styling */
+.sidebar a {
+    display: flex;
+    align-items: center;
+    padding: 18px 30px;
+    color: white;
+    text-decoration: none;
+    margin-bottom: 12px;
+    border-radius: 8px;
+    transition: background 0.3s, padding-left 0.3s;
+    font-size: 18px;
+}
+
+.sidebar a:hover {
+    background-color: #2a378d;
+    padding-left: 40px;
+}
+
+/* Sidebar Icons Styling */
+.sidebar a i {
+    margin-right: 15px;
+    font-size: 22px;
+}
+
+/* Main Content Styling */
+.main-content {
+    margin-left: 300px;
+    padding: 30px;
+    transition: margin-left 0.3s;
+}
+
+/* Dashboard Header Styling */
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.dashboard-header h1 {
+    font-size: 24px;
+    color: #3b4cb8;
+}
+
+.dashboard-header button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.dashboard-header button:hover {
+    background-color: #0056b3;
+}
+
+/* Form Styling */
+form {
+    background: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+form label {
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+form input, form select, form textarea {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+/* Buttons */
+button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    margin-top: 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 220px;
+    }
+    .main-content {
+        margin-left: 220px;
+    }
+}
