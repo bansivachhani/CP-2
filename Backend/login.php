@@ -2,63 +2,64 @@
 session_start();
 include("db_connection.php");
 
-if (!isset($_POST['role']) || !isset($_POST['email']) || !isset($_POST['password'])) {
-    die("Invalid Request");
-}
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $email = $_POST["email"];
+    $password = $_POST["password"];
+    $role = $_POST["role"];
 
-$role = trim($_POST['role']);
-$email = trim($_POST['email']);
-$password = trim($_POST['password']);
-
-if ($role === 'student') {
-    $query = "SELECT * FROM students WHERE email='$email' AND password='$password'";
-    $result = mysqli_query($conn, $query);
-    $user = mysqli_fetch_assoc($result);
-
-    if ($user) {
-        $_SESSION['student_id'] = $user['id'];
-        $_SESSION['student_name'] = $user['name'];
-        $_SESSION['semester'] = $user['semester'];
-        header("Location: student_panel.php");
-        exit();
-    } else {
-        echo "Invalid Student Credentials";
+    if (empty($email) || empty($password) || empty($role)) {
+        die("Please fill all fields!");
     }
-}
 
-elseif ($role === 'faculty') {
-    $query = "SELECT * FROM faculty WHERE email='$email' AND password='$password'";
-    $result = mysqli_query($conn, $query);
-    $user = mysqli_fetch_assoc($result);
-
-    if ($user) {
-        $_SESSION['faculty_id'] = $user['id'];
-        $_SESSION['faculty_name'] = $user['name'];
-        header("Location: faculty_dashboard.php");
-        exit();
+    // Role-based table and column selection
+    if ($role == "student") {
+        $table = "students";
+        $id_column = "student_id";
+        $redirect = "student_panel.php";
+    } elseif ($role == "faculty") {
+        $table = "faculty";
+        $id_column = "faculty_id";
+        $redirect = "faculty_dashboard.php";
+    } elseif ($role == "admin") {
+        $table = "admin";
+        $id_column = "admin_id";
+        $redirect = "admin_dashboard.php";
     } else {
-        echo "Invalid Faculty Credentials";
+        die("Invalid Role Selected!");
     }
-}
 
-elseif ($role === 'admin') {
-    $query = "SELECT * FROM admin WHERE email='$email' AND password='$password'";
-    $result = mysqli_query($conn, $query);
-    $user = mysqli_fetch_assoc($result);
+    // Prepare SQL Query
+    $sql = "SELECT $id_column, password FROM $table WHERE email = ?";
+    $stmt = $conn->prepare($sql);
 
-    if ($user) {
-        $_SESSION['admin_id'] = $user['id'];
-        $_SESSION['admin_name'] = $user['name'];
-        header("Location: admin_dashboard.php");
-        exit();
+    if (!$stmt) {
+        die("SQL Error: " . $conn->error);
+    }
+
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows === 1) {
+        $row = $result->fetch_assoc();
+
+        // ✅ Direct string comparison (NO Hashing)
+        if ($password === $row["password"]) {
+            $_SESSION["user_id"] = $row[$id_column];
+            $_SESSION["role"] = $role;
+            
+            header("Location: /Bansi/CP/Backend/$redirect");
+            exit();
+        } else {
+            echo "Invalid Password!";
+        }
     } else {
-        echo "Invalid Admin Credentials";
+        echo "User not found!";
     }
-}
 
-else {
-    echo "Invalid Role Selection.";
+    $stmt->close();
+    $conn->close();
+} else {
+    echo "Invalid Request!";
 }
-
-mysqli_close($conn);
 ?>

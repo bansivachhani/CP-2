@@ -2,24 +2,34 @@
 session_start();
 include("db_connection.php");
 
+// Debugging: Check if session is set
 if (!isset($_SESSION['student_id'])) {
-    header("Location: index.html");
-    exit();
+    die("Session not set. Please log in again.");
 }
 
 $student_id = $_SESSION['student_id'];
 
-// Fetch ratings submitted by this student
+// Debugging: Check Student ID
+echo "Debug: Student ID - " . $student_id . "<br>";
+
 $query = "SELECT ratings.*, subjects.subject_name, faculty.name AS faculty_name
           FROM ratings
-          JOIN subjects ON ratings.subject_id = subjects.id
-          JOIN faculty ON subjects.faculty_id = faculty.id
+          JOIN subjects ON ratings.subject_id = subjects.subject_id
+          JOIN faculty ON subjects.faculty_id = faculty.faculty_id
           WHERE ratings.student_id = ?";
-          
+
 $stmt = $conn->prepare($query);
+if (!$stmt) {
+    die("Query preparation failed: " . $conn->error);
+}
 $stmt->bind_param("i", $student_id);
 $stmt->execute();
 $result = $stmt->get_result();
+
+// Debugging: Check if data exists
+if ($result->num_rows == 0) {
+    die("No ratings found for student_id: " . $student_id);
+}
 ?>
 
 <!DOCTYPE html>

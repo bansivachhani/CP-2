@@ -2,26 +2,32 @@
 session_start();
 include("db_connection.php");
 
+// Debugging: Check if session is set
 if (!isset($_SESSION['faculty_id'])) {
-    header("Location: index.html");
-    exit();
+    die("Session not set. Please log in again.");
 }
 
 $faculty_id = $_SESSION['faculty_id'];
 
-// Fetch all leave requests for the logged-in faculty
+// Debugging: Print faculty ID
+echo "Debug: Faculty ID - " . $faculty_id . "<br>";
+
 $sql = "SELECT * FROM leave_requests WHERE faculty_id = ?";
 $stmt = $conn->prepare($sql);
 
+// Debugging: Check if query executed properly
 if (!$stmt) {
-    die("Error preparing statement: " . $conn->error);
+    die("Query preparation failed: " . $conn->error);
 }
 
 $stmt->bind_param("i", $faculty_id);
 $stmt->execute();
 $result = $stmt->get_result();
-$stmt->close();
-$conn->close();
+
+// Debugging: Check if data exists
+if ($result->num_rows == 0) {
+    die("No leave requests found for faculty_id: " . $faculty_id);
+}
 ?>
 
 <!DOCTYPE html>

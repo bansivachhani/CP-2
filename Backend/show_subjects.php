@@ -15,10 +15,11 @@ if (!isset($_SESSION['semester'])) {
 $semester = $_SESSION['semester'];
 $student_id = $_SESSION['student_id'];
 
-$query = "SELECT subjects.id, subjects.subject_name, faculty.name AS faculty_name 
+$query = "SELECT subjects.id, subjects.subject_name, faculty.id AS faculty_id, faculty.name AS faculty_name 
           FROM subjects 
           LEFT JOIN faculty ON subjects.faculty_id = faculty.id
           WHERE subjects.semester = ?";
+
           
 $stmt = $conn->prepare($query);
 $stmt->bind_param("i", $semester);
@@ -37,11 +38,11 @@ $result = $stmt->get_result();
 <div class="container mt-5">
     <h2>Rate Subjects for Semester <?php echo htmlspecialchars($semester); ?></h2>
     <form action="submit_rating.php" method="POST">
-
     <?php while ($row = $result->fetch_assoc()) { ?>
         <div class="card mt-3 p-3">
             <h4><?php echo htmlspecialchars($row['subject_name']); ?> (Faculty: <?php echo htmlspecialchars($row['faculty_name']); ?>)</h4>
             <input type="hidden" name="subject_id[]" value="<?php echo $row['id']; ?>">
+            <input type="hidden" name="faculty_id[]" value="<?php echo $row['faculty_id']; ?>">
 
             <label>Teaching Skills (1-5):</label>
             <input type="number" name="teaching_skills[]" min="1" max="5" class="form-control" required>

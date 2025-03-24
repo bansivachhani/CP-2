@@ -1,38 +1,25 @@
 <?php
-session_start();
 include("db_connection.php");
 
-$query = "SELECT * FROM students";
+$query = "SELECT student_id, name, email FROM students"; // ✅ Corrected Column Name
 $result = $conn->query($query);
-?>
 
-<!DOCTYPE html>
-<html>
-<head>
-    <title>View Students</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
-</head>
-<body>
-<div class="container mt-5">
-    <h2>Students List</h2>
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Email</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php while ($row = $result->fetch_assoc()) { ?>
-                <tr>
-                    <td><?php echo $row['id']; ?></td>
-                    <td><?php echo $row['name']; ?></td>
-                    <td><?php echo $row['email']; ?></td>
-                </tr>
-            <?php } ?>
-        </tbody>
-    </table>
-</div>
-</body>
-</html>
+if ($result->num_rows > 0) {
+    echo "<table border='1'>";
+    echo "<tr><th>ID</th><th>Name</th><th>Email</th></tr>";
+    
+    while ($row = $result->fetch_assoc()) {
+        echo "<tr>";
+        echo "<td>" . $row['student_id'] . "</td>"; // ✅ Corrected Key
+        echo "<td>" . $row['name'] . "</td>";
+        echo "<td>" . $row['email'] . "</td>";
+        echo "</tr>";
+    }
+    
+    echo "</table>";
+} else {
+    echo "No students found.";
+}
+
+$conn->close();
+?>
